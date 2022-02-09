@@ -53,7 +53,8 @@ class ViewController: UIViewController {
         button.backgroundColor = .lightGray
         button.setTitle("Press", for: .normal)
         button.setTitle("Great", for: .highlighted)
-        button.frame = CGRect(x: viewTwo.bounds.size.width/2 + viewTwo.bounds.origin.x, y: viewTwo.frame.size.height/2, width: 120, height: 50)
+        button.frame = CGRect(x: 0, y: 0, width: 120, height: 50)
+        button.center = view.center
         button.layer.cornerRadius = button.bounds.width/5
         button.layer.shadowRadius = 5
         button.alpha = 0
