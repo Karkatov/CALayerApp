@@ -12,33 +12,66 @@ class ViewController: UIViewController {
     let positionAnimationLayer = CALayer()
     let opacityAnimationLayer = CALayer()
     let viewTwo = UIView()
+    let shapeLayer = CAShapeLayer()
+    
+    var button = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         let gradient = setGradient()
         view.layer.insertSublayer(gradient, at: 0)
         
-
+        viewTwo.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+        self.view.addSubview(viewTwo)
         
-    
+//        // сжатия и сужение представление
+//        viewTwo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+//
+//        // смещение представление
+//        viewTwo.transform = CGAffineTransform(translationX: 40, y: 40)
+//
+//        // разворот представление
+//        viewTwo.transform = CGAffineTransform(rotationAngle: 0.3)
         
-        positionAnimationLayer.backgroundColor = UIColor.systemRed.cgColor
         positionAnimationLayer.frame = CGRect(x: 50, y: 50, width: 100, height: 100)
+        positionAnimationLayer.backgroundColor = UIColor.systemRed.cgColor
         positionAnimationLayer.cornerRadius = positionAnimationLayer.bounds.size.width/2
-        self.view.layer.addSublayer(positionAnimationLayer)
+        self.viewTwo.layer.addSublayer(positionAnimationLayer)
         
-        viewTwo.frame = CGRect(x: view.layer.bounds.origin.x, y: view.layer.bounds.origin.y, width: 50, height: 50)
-                viewTwo.layer.cornerRadius = viewTwo.bounds.size.width/2
-                viewTwo.backgroundColor = .black
-                self.viewTwo.layer.addSublayer(opacityAnimationLayer)
-                self.view.addSubview(viewTwo)
+        
+        opacityAnimationLayer.frame = CGRect(x: 20, y: 40, width: 100, height: 50)
+        opacityAnimationLayer.cornerRadius = opacityAnimationLayer.bounds.width/5
+        self.viewTwo.layer.addSublayer(opacityAnimationLayer)
+        opacityAnimationLayer.backgroundColor = UIColor.systemYellow.cgColor
+        
+        // Button
+        button.addTarget(self, action: #selector(showEditing), for: .touchUpInside)
+        button = UIButton(type: .roundedRect)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        button.backgroundColor = .lightGray
+        button.setTitle("Press", for: .normal)
+        button.setTitle("Great", for: .highlighted)
+        button.frame = CGRect(x: viewTwo.bounds.size.width/2 + viewTwo.bounds.origin.x, y: viewTwo.frame.size.height/2, width: 120, height: 50)
+        button.layer.cornerRadius = button.bounds.width/5
+        button.layer.shadowRadius = 5
+        button.alpha = 0
+        viewTwo.addSubview(button)
+        
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
+            
             self.setPositionAnimation()
-            self.viewTwo.layer.opacityAnimation(myDuration: 0.2)
+            self.opacityAnimation(myDuration: 0.5)
+            self.setTransformAnimation()
+            
+            
         }
-    
+        
     }
+}
+
+extension ViewController {
     
     // CAGradientLayer
     func setGradient() -> CAGradientLayer {
@@ -60,8 +93,41 @@ class ViewController: UIViewController {
         animation.duration = 5
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
-    
+        
         positionAnimationLayer.add(animation, forKey: nil)
+    }
+    
+    
+    func opacityAnimation(myDuration: Double) {
+        
+        let label = CABasicAnimation(keyPath: "opacity")
+        
+        label.fromValue = 0
+        label.toValue = 1
+        label.duration = myDuration
+        label.fillMode = .forwards
+        label.isRemovedOnCompletion = false
+        //label.autoreverses = true
+       // label.repeatCount = 1
+        
+        opacityAnimationLayer.add(label, forKey: nil)
+        button.layer.add(label, forKey: nil)
+        
+    }
+    
+    // TransformAnimation
+    func setTransformAnimation() {
+        let animation = CABasicAnimation(keyPath: "transform.scale.xy")
+        animation.fromValue = 0.5
+        animation.toValue = 1
+        animation.duration = 0.5
+        animation.repeatCount = 4
+        opacityAnimationLayer.add(animation, forKey: "position")
+    }
+    
+    @objc func showEditing() {
+        print("TAP!")
+        
     }
     
 }

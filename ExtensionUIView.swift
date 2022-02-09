@@ -11,19 +11,19 @@ import UIKit
 extension CALayer {
     
     // CABasicAnimation - "opacity"
-    func opacityAnimation(myDuration: Double) {
-        
-        let label = CABasicAnimation(keyPath: "opacity")
-        
-        label.fromValue = 0
-        label.toValue = 1
-        label.duration = myDuration
-        label.fillMode = .forwards
-        label.isRemovedOnCompletion = false
-        label.autoreverses = true
-        label.repeatCount = 10
-        
-        self.add(label, forKey: nil)
-        
-    }
+//    func opacityAnimation(myDuration: Double) {
+//        
+//        let label = CABasicAnimation(keyPath: "opacity")
+//        
+//        label.fromValue = 0
+//        label.toValue = 1
+//        label.duration = myDuration
+//        label.fillMode = .forwards
+//        label.isRemovedOnCompletion = true
+//        label.autoreverses = true
+//        label.repeatCount = 5
+//        
+//        self.add(label, forKey: nil)
+//        
+//    }
 }
