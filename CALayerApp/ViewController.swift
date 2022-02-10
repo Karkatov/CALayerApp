@@ -12,28 +12,39 @@ class ViewController: UIViewController {
     let positionAnimationLayer = CALayer()
     let opacityAnimationLayer = CALayer()
     let viewTwo = UIView()
-    let shapeLayer = CAShapeLayer()
     
     var button = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setViews()
         
+        
+        
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
+            
+            
+            self.setButton()
+            //            self.setPositionAnimation()
+            self.opacityAnimation(myDuration: 0.5)
+            //            self.setTransformAnimation()
+            
+        }
+    }
+}
+
+extension ViewController {
+    
+    // Set Views
+    func setViews() {
         let gradient = setGradient()
         view.layer.insertSublayer(gradient, at: 0)
         
-        viewTwo.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+        viewTwo.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         self.view.addSubview(viewTwo)
         
-//        // сжатия и сужение представление
-//        viewTwo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
-//
-//        // смещение представление
-//        viewTwo.transform = CGAffineTransform(translationX: 40, y: 40)
-//
-//        // разворот представление
-//        viewTwo.transform = CGAffineTransform(rotationAngle: 0.3)
         
         positionAnimationLayer.frame = CGRect(x: 50, y: 50, width: 100, height: 100)
         positionAnimationLayer.backgroundColor = UIColor.systemRed.cgColor
@@ -46,33 +57,32 @@ class ViewController: UIViewController {
         self.viewTwo.layer.addSublayer(opacityAnimationLayer)
         opacityAnimationLayer.backgroundColor = UIColor.systemYellow.cgColor
         
-        // Button
-        button.addTarget(self, action: #selector(showEditing), for: .touchUpInside)
-        button = UIButton(type: .roundedRect)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        button.backgroundColor = .lightGray
-        button.setTitle("Press", for: .normal)
-        button.setTitle("Great", for: .highlighted)
-        button.frame = CGRect(x: 0, y: 0, width: 120, height: 50)
-        button.center = view.center
-        button.layer.cornerRadius = button.bounds.width/5
-        button.layer.shadowRadius = 5
-        button.alpha = 0
-        viewTwo.addSubview(button)
+        let image = UIImage(named: "worker")
+        let imageView = UIImageView()
+        imageView.image = image
+        imageView.frame = CGRect(x: 0, y: 0, width: 160, height: 160)
+        viewTwo.addSubview(imageView)
+        imageView.clipsToBounds = true
+        imageView.layer.borderWidth = 6
+        imageView.layer.borderColor = UIColor.black.cgColor
+        imageView.layer.cornerRadius = imageView.bounds.size.width/2
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
-            
-            self.setPositionAnimation()
-            self.opacityAnimation(myDuration: 0.5)
-            self.setTransformAnimation()
-            
-            
-        }
+//        userView.layer.borderColor = UIColor.black.cgColor
+//        userView.layer.borderWidth = 10
+        
+        
+        
+        //        // сжатия и сужение представление
+        //        viewTwo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        //
+        //        // смещение представление
+        //        viewTwo.transform = CGAffineTransform(translationX: 40, y: 40)
+        //
+        //        // разворот представление
+        //        viewTwo.transform = CGAffineTransform(rotationAngle: 0.3)
         
     }
-}
-
-extension ViewController {
+    
     
     // CAGradientLayer
     func setGradient() -> CAGradientLayer {
@@ -102,33 +112,55 @@ extension ViewController {
     func opacityAnimation(myDuration: Double) {
         
         let label = CABasicAnimation(keyPath: "opacity")
-        
+    
         label.fromValue = 0
         label.toValue = 1
         label.duration = myDuration
         label.fillMode = .forwards
         label.isRemovedOnCompletion = false
         //label.autoreverses = true
-       // label.repeatCount = 1
+        // label.repeatCount = 1
         
         opacityAnimationLayer.add(label, forKey: nil)
         button.layer.add(label, forKey: nil)
-        
     }
     
     // TransformAnimation
     func setTransformAnimation() {
         let animation = CABasicAnimation(keyPath: "transform.scale.xy")
-        animation.fromValue = 0.5
+        animation.fromValue = 0
         animation.toValue = 1
         animation.duration = 0.5
         animation.repeatCount = 4
+        
         opacityAnimationLayer.add(animation, forKey: "position")
+    }
+    
+    
+    // Button
+    func setButton() {
+        
+        button = UIButton(type: .roundedRect)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        button.backgroundColor = .white
+        button.setTitle("START", for: .normal)
+        button.setTitle("💬", for: .highlighted)
+        button.bounds.size.width = 120
+        button.bounds.size.height = 50
+        button.frame = CGRect(x: (viewTwo.bounds.size.width - button.bounds.size.width)/2,
+                              y: (viewTwo.bounds.size.height - button.bounds.size.height)/1.2, width: button.bounds.size.width, height: button.bounds.size.height)
+        button.layer.cornerRadius = button.bounds.width/5
+        button.layer.shadowRadius = 5
+        button.addTarget(self, action: #selector(showEditing), for: .touchUpInside)
+        viewTwo.addSubview(button)
     }
     
     @objc func showEditing() {
         print("TAP!")
-        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
+            
+            self.setPositionAnimation()
+            self.setTransformAnimation()
+        }
     }
-    
 }
