@@ -24,22 +24,26 @@ class ViewController: UIViewController {
         view.layer.insertSublayer(gradient, at: 0)
         
         setViewTwo()
-        self.setConfigurationShapeLayer(self.startShapeLayer, color: UIColor.systemCyan.cgColor, strokeEnd: 1.0)
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
-            
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+0.5) {
             self.setUserImageView()
-            self.imageView.layer.add(self.opacityAnimation(myDuration: 1), forKey: nil)
+            self.imageView.layer.add(self.opacityAnimation(myDuration: 0.5), forKey: nil)
+            
         }
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1.2) {
-            
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1.0) {
+            self.startShapeLayer.add(self.opacityAnimation(myDuration: 0.5), forKey: nil)
             self.setConfigurationShapeLayer(self.startShapeLayer, color: UIColor.systemCyan.cgColor, strokeEnd: 1.0)
+            
+            self.setConfigurationShapeLayer(self.overShapeLayer, color: UIColor.white.cgColor, strokeEnd: 0.0)
+            
         }
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1.5) {
             self.setButton()
-            self.button.layer.add(self.opacityAnimation(myDuration: 1), forKey: nil)
+            self.button.layer.add(self.opacityAnimation(myDuration: 0.5), forKey: nil)
+            self.overShapeLayer.strokeEnd += 0.2
         }
     }
 }
@@ -76,11 +80,17 @@ extension ViewController {
     }
     
     @objc func showEditing() {
-        print("TAP!")
+        overShapeLayer.strokeEnd += 0.2
         
-        overShapeLayer.strokeEnd += 0.1
-        print(overShapeLayer.strokeEnd)
-        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
+            if self.overShapeLayer.strokeEnd == 1 {
+                
+                print("OK")
+                let secondVC = SecondViewController()
+                self.navigationController?.pushViewController(secondVC, animated: true)
+                
+            }
+        }
     }
     
     func setUserImageView() {
@@ -92,8 +102,8 @@ extension ViewController {
                                  y: (view.bounds.size.height + imageView.bounds.size.height)/6,
                                  width: 160, height: 160)
         imageView.clipsToBounds = true
-        imageView.layer.borderWidth = 6
-        imageView.layer.borderColor = UIColor.black.cgColor
+        imageView.layer.borderWidth = 5
+        imageView.layer.borderColor = UIColor.white.cgColor
         imageView.layer.cornerRadius = imageView.bounds.size.width/2
         
         viewTwo.addSubview(imageView)
@@ -162,9 +172,12 @@ extension ViewController {
         shapeLayer.path = path.cgPath
         shapeLayer.lineWidth = 20.0
         shapeLayer.lineCap = .round
-        shapeLayer.fillColor = .none
+        //shapeLayer.fillColor = .none
         shapeLayer.strokeEnd = strokeEnd
         shapeLayer.strokeColor = color
+        shapeLayer.shadowColor = UIColor.black.cgColor
+        shapeLayer.shadowOpacity = 0.2
+        shapeLayer.shadowRadius = 10
     }
 }
 
