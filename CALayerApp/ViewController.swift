@@ -9,80 +9,116 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    let viewTwo = UIView()
     let positionAnimationLayer = CALayer()
     let opacityAnimationLayer = CALayer()
-    let viewTwo = UIView()
+    var startShapeLayer: CAShapeLayer {
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.lineWidth = 20.0
+        shapeLayer.lineCap = .round
+        shapeLayer.fillColor = .none
+        shapeLayer.strokeEnd = 1
+        shapeLayer.strokeColor = UIColor.systemCyan.cgColor
+        return shapeLayer
+    }
     
+    var overShapeLayer: CAShapeLayer {
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.lineWidth = 20.0
+        shapeLayer.lineCap = .round
+        shapeLayer.fillColor = .none
+        shapeLayer.strokeEnd = 0.0
+        shapeLayer.strokeColor = UIColor.white.cgColor
+        return shapeLayer
+    }
+    
+    let imageView = UIImageView()
     var button = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setViews()
-        
-        
-        
+       
+        let gradient = setGradient()
+        view.layer.insertSublayer(gradient, at: 0)
+
+        setViewTwo()
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
             
+            self.setUserImageView()
+            self.imageView.layer.add(self.opacityAnimation(myDuration: 1), forKey: nil)
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1.2) {
             
+            self.setConfigurationShapeLayer(self.startShapeLayer)
+            self.setConfigurationShapeLayer(self.overShapeLayer)
+            
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1.5) {
             self.setButton()
-            //            self.setPositionAnimation()
-            self.opacityAnimation(myDuration: 0.5)
-            //            self.setTransformAnimation()
-            
+            self.button.layer.add(self.opacityAnimation(myDuration: 1), forKey: nil)
         }
     }
 }
 
 extension ViewController {
     
-    // Set Views
-    func setViews() {
-        let gradient = setGradient()
-        view.layer.insertSublayer(gradient, at: 0)
-        
-        viewTwo.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+    // Set View
+    func setViewTwo() {
+       
+        viewTwo.frame = CGRect(x: 0, y: 0,
+                               width: view.frame.size.width,
+                               height: view.frame.size.height)
         self.view.addSubview(viewTwo)
-        
-        
-        positionAnimationLayer.frame = CGRect(x: 50, y: 50, width: 100, height: 100)
-        positionAnimationLayer.backgroundColor = UIColor.systemRed.cgColor
-        positionAnimationLayer.cornerRadius = positionAnimationLayer.bounds.size.width/2
-        self.viewTwo.layer.addSublayer(positionAnimationLayer)
-        
-        
-        opacityAnimationLayer.frame = CGRect(x: 20, y: 40, width: 100, height: 50)
-        opacityAnimationLayer.cornerRadius = opacityAnimationLayer.bounds.width/5
-        self.viewTwo.layer.addSublayer(opacityAnimationLayer)
-        opacityAnimationLayer.backgroundColor = UIColor.systemYellow.cgColor
-        
-        let image = UIImage(named: "worker")
-        let imageView = UIImageView()
-        imageView.image = image
-        imageView.frame = CGRect(x: 0, y: 0, width: 160, height: 160)
-        viewTwo.addSubview(imageView)
-        imageView.clipsToBounds = true
-        imageView.layer.borderWidth = 6
-        imageView.layer.borderColor = UIColor.black.cgColor
-        imageView.layer.cornerRadius = imageView.bounds.size.width/2
-        
-//        userView.layer.borderColor = UIColor.black.cgColor
-//        userView.layer.borderWidth = 10
-        
-        
-        
-        //        // сжатия и сужение представление
-        //        viewTwo.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
-        //
-        //        // смещение представление
-        //        viewTwo.transform = CGAffineTransform(translationX: 40, y: 40)
-        //
-        //        // разворот представление
-        //        viewTwo.transform = CGAffineTransform(rotationAngle: 0.3)
-        
     }
     
+    // Button
+    func setButton() {
+        
+        button = UIButton(type: .roundedRect)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        button.backgroundColor = .white
+        button.setTitle("START", for: .normal)
+        button.setTitle("💬💬💬", for: .highlighted)
+        button.bounds.size.width = 120
+        button.bounds.size.height = 50
+        button.frame = CGRect(x: (viewTwo.bounds.size.width - button.bounds.size.width)/2,
+                              y: (viewTwo.bounds.size.height - button.bounds.size.height)/1.2, width: button.bounds.size.width, height: button.bounds.size.height)
+        button.layer.cornerRadius = button.bounds.width/5
+        button.layer.shadowRadius = 15
+        button.layer.shadowColor = UIColor.darkGray.cgColor
+        button.layer.shadowOpacity = 0.7
+        button.addTarget(self, action: #selector(showEditing), for: .touchUpInside)
+        viewTwo.addSubview(button)
+    }
+    
+    @objc func showEditing() {
+        print("TAP!")
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
+        
+            self.overShapeLayer.strokeEnd += 0.1
+            print(self.overShapeLayer.strokeEnd)
+        }
+    }
+    
+       func setUserImageView() {
+           let image = UIImage(named: "worker")
+           imageView.image = image
+           imageView.bounds.size.width = 160
+           imageView.bounds.size.height = 160
+           imageView.frame = CGRect(x: (view.bounds.size.width - imageView.bounds.size.width)/2,
+                                    y: (view.bounds.size.height + imageView.bounds.size.height)/6,
+       width: 160, height: 160)
+           imageView.clipsToBounds = true
+           imageView.layer.borderWidth = 6
+           imageView.layer.borderColor = UIColor.black.cgColor
+           imageView.layer.cornerRadius = imageView.bounds.size.width/2
+    
+           viewTwo.addSubview(imageView)
+        }
     
     // CAGradientLayer
     func setGradient() -> CAGradientLayer {
@@ -108,24 +144,22 @@ extension ViewController {
         positionAnimationLayer.add(animation, forKey: nil)
     }
     
-    
-    func opacityAnimation(myDuration: Double) {
+    // CABasicAnimation - "opacity"
+    func opacityAnimation(myDuration: Double) -> CABasicAnimation {
         
-        let label = CABasicAnimation(keyPath: "opacity")
-    
-        label.fromValue = 0
-        label.toValue = 1
-        label.duration = myDuration
-        label.fillMode = .forwards
-        label.isRemovedOnCompletion = false
-        //label.autoreverses = true
-        // label.repeatCount = 1
+        let animation = CABasicAnimation(keyPath: "opacity")
         
-        opacityAnimationLayer.add(label, forKey: nil)
-        button.layer.add(label, forKey: nil)
+        animation.fromValue = 0
+        animation.toValue = 1
+        animation.duration = myDuration
+        animation.fillMode = .forwards
+        animation.isRemovedOnCompletion = false
+        //animation.autoreverses = true
+        // animation.repeatCount = 1
+        return animation
     }
     
-    // TransformAnimation
+    // CABasicAnimation - "transform.scale"
     func setTransformAnimation() {
         let animation = CABasicAnimation(keyPath: "transform.scale.xy")
         animation.fromValue = 0
@@ -136,31 +170,16 @@ extension ViewController {
         opacityAnimationLayer.add(animation, forKey: "position")
     }
     
-    
-    // Button
-    func setButton() {
-        
-        button = UIButton(type: .roundedRect)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
-        button.backgroundColor = .white
-        button.setTitle("START", for: .normal)
-        button.setTitle("💬", for: .highlighted)
-        button.bounds.size.width = 120
-        button.bounds.size.height = 50
-        button.frame = CGRect(x: (viewTwo.bounds.size.width - button.bounds.size.width)/2,
-                              y: (viewTwo.bounds.size.height - button.bounds.size.height)/1.2, width: button.bounds.size.width, height: button.bounds.size.height)
-        button.layer.cornerRadius = button.bounds.width/5
-        button.layer.shadowRadius = 5
-        button.addTarget(self, action: #selector(showEditing), for: .touchUpInside)
-        viewTwo.addSubview(button)
-    }
-    
-    @objc func showEditing() {
-        print("TAP!")
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
-            
-            self.setPositionAnimation()
-            self.setTransformAnimation()
-        }
+    // UIShapeLayer
+    func setConfigurationShapeLayer(_ shapeLayer: CAShapeLayer) {
+        shapeLayer.frame = viewTwo.frame
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: self.viewTwo.bounds.width/2 - 100,
+                              y: self.viewTwo.bounds.height/2))
+        path.addLine(to: CGPoint(x: self.viewTwo.bounds.width/2 + 100,
+                                 y: self.viewTwo.bounds.height/2))
+        shapeLayer.path = path.cgPath
+        viewTwo.layer.addSublayer(shapeLayer)
     }
 }
+
