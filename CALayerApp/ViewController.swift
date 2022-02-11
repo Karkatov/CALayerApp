@@ -12,36 +12,19 @@ class ViewController: UIViewController {
     let viewTwo = UIView()
     let positionAnimationLayer = CALayer()
     let opacityAnimationLayer = CALayer()
-    var startShapeLayer: CAShapeLayer {
-        let shapeLayer = CAShapeLayer()
-        shapeLayer.lineWidth = 20.0
-        shapeLayer.lineCap = .round
-        shapeLayer.fillColor = .none
-        shapeLayer.strokeEnd = 1
-        shapeLayer.strokeColor = UIColor.systemCyan.cgColor
-        return shapeLayer
-    }
-    
-    var overShapeLayer: CAShapeLayer {
-        let shapeLayer = CAShapeLayer()
-        shapeLayer.lineWidth = 20.0
-        shapeLayer.lineCap = .round
-        shapeLayer.fillColor = .none
-        shapeLayer.strokeEnd = 0.0
-        shapeLayer.strokeColor = UIColor.white.cgColor
-        return shapeLayer
-    }
-    
+    var startShapeLayer = CAShapeLayer()
+    var overShapeLayer = CAShapeLayer()
     let imageView = UIImageView()
     var button = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         let gradient = setGradient()
         view.layer.insertSublayer(gradient, at: 0)
-
+        
         setViewTwo()
+        self.setConfigurationShapeLayer(self.startShapeLayer, color: UIColor.systemCyan.cgColor, strokeEnd: 1.0)
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1) {
             
@@ -51,9 +34,7 @@ class ViewController: UIViewController {
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1.2) {
             
-            self.setConfigurationShapeLayer(self.startShapeLayer)
-            self.setConfigurationShapeLayer(self.overShapeLayer)
-            
+            self.setConfigurationShapeLayer(self.startShapeLayer, color: UIColor.systemCyan.cgColor, strokeEnd: 1.0)
         }
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+1.5) {
@@ -67,7 +48,7 @@ extension ViewController {
     
     // Set View
     func setViewTwo() {
-       
+        
         viewTwo.frame = CGRect(x: 0, y: 0,
                                width: view.frame.size.width,
                                height: view.frame.size.height)
@@ -97,28 +78,26 @@ extension ViewController {
     @objc func showEditing() {
         print("TAP!")
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()) {
+        overShapeLayer.strokeEnd += 0.1
+        print(overShapeLayer.strokeEnd)
         
-            self.overShapeLayer.strokeEnd += 0.1
-            print(self.overShapeLayer.strokeEnd)
-        }
     }
     
-       func setUserImageView() {
-           let image = UIImage(named: "worker")
-           imageView.image = image
-           imageView.bounds.size.width = 160
-           imageView.bounds.size.height = 160
-           imageView.frame = CGRect(x: (view.bounds.size.width - imageView.bounds.size.width)/2,
-                                    y: (view.bounds.size.height + imageView.bounds.size.height)/6,
-       width: 160, height: 160)
-           imageView.clipsToBounds = true
-           imageView.layer.borderWidth = 6
-           imageView.layer.borderColor = UIColor.black.cgColor
-           imageView.layer.cornerRadius = imageView.bounds.size.width/2
-    
-           viewTwo.addSubview(imageView)
-        }
+    func setUserImageView() {
+        let image = UIImage(named: "worker")
+        imageView.image = image
+        imageView.bounds.size.width = 160
+        imageView.bounds.size.height = 160
+        imageView.frame = CGRect(x: (view.bounds.size.width - imageView.bounds.size.width)/2,
+                                 y: (view.bounds.size.height + imageView.bounds.size.height)/6,
+                                 width: 160, height: 160)
+        imageView.clipsToBounds = true
+        imageView.layer.borderWidth = 6
+        imageView.layer.borderColor = UIColor.black.cgColor
+        imageView.layer.cornerRadius = imageView.bounds.size.width/2
+        
+        viewTwo.addSubview(imageView)
+    }
     
     // CAGradientLayer
     func setGradient() -> CAGradientLayer {
@@ -171,15 +150,21 @@ extension ViewController {
     }
     
     // UIShapeLayer
-    func setConfigurationShapeLayer(_ shapeLayer: CAShapeLayer) {
+    func setConfigurationShapeLayer(_ shapeLayer: CAShapeLayer, color: CGColor, strokeEnd: Double) {
+        
         shapeLayer.frame = viewTwo.frame
+        viewTwo.layer.addSublayer(shapeLayer)
         let path = UIBezierPath()
         path.move(to: CGPoint(x: self.viewTwo.bounds.width/2 - 100,
                               y: self.viewTwo.bounds.height/2))
         path.addLine(to: CGPoint(x: self.viewTwo.bounds.width/2 + 100,
                                  y: self.viewTwo.bounds.height/2))
         shapeLayer.path = path.cgPath
-        viewTwo.layer.addSublayer(shapeLayer)
+        shapeLayer.lineWidth = 20.0
+        shapeLayer.lineCap = .round
+        shapeLayer.fillColor = .none
+        shapeLayer.strokeEnd = strokeEnd
+        shapeLayer.strokeColor = color
     }
 }
 
