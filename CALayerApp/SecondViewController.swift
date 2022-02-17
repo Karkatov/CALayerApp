@@ -57,5 +57,13 @@ class SecondViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         let image = UIImage(named: "congrat")
         imageView.image = image
+        imageView.center = view.center
+        UIImageView.animateKeyframes(withDuration: 1,
+                                     delay: 0,
+                                     options: [.autoreverse, .repeat]) {
+            
+            self.imageView.frame.origin.y -= 20
+            self.imageView.frame.origin.y += 20
+        }
     }
 }
