@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Spring
 
 class SecondViewController: UIViewController {
     
@@ -14,14 +15,14 @@ class SecondViewController: UIViewController {
     let imageView = UIImageView()
     let shapeLayer = CAShapeLayer()
     let secondShapeLayer = CAShapeLayer()
+    let springView = SpringView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
     
         setSecondeView()
         setConfigurationImageView()
-        
-        
+        scaleAnimation()
     }
     
     override func viewDidLayoutSubviews() {
@@ -58,12 +59,27 @@ class SecondViewController: UIViewController {
         let image = UIImage(named: "congrat")
         imageView.image = image
         imageView.center = view.center
-        UIImageView.animateKeyframes(withDuration: 1,
+        UIView.animateKeyframes(withDuration: 1,
                                      delay: 0,
                                      options: [.autoreverse, .repeat]) {
+
+            self.imageView.frame.size.width -= 80
+            self.imageView.frame.size.width += 80
             
-            self.imageView.frame.origin.y -= 20
-            self.imageView.frame.origin.y += 20
+            self.imageView.frame.size.height -= 80
+            self.imageView.frame.size.height += 80
         }
+    }
+    
+    func scaleAnimation() {
+        let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+        scaleAnimation.fromValue = 1
+        scaleAnimation.toValue = 1.5
+        scaleAnimation.duration = 0.5
+        scaleAnimation.autoreverses = true
+        scaleAnimation.isRemovedOnCompletion = false
+        //scaleAnimation.fillMode = .backwards
+        
+        imageView.layer.add(scaleAnimation, forKey: nil)
     }
 }

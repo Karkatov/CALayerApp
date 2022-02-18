@@ -5,7 +5,7 @@
 //  Created by Duxxless on 05.02.2022.
 //
 
-import UIKit
+import Spring
 
 class ViewController: UIViewController {
     
@@ -82,6 +82,7 @@ extension ViewController {
     
     @objc func showEditing() {
         overShapeLayer.strokeEnd += 0.2
+        scaleAnimation()
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3) {
             if self.overShapeLayer.strokeEnd == 1 {
@@ -179,6 +180,16 @@ extension ViewController {
         shapeLayer.shadowColor = UIColor.black.cgColor
         shapeLayer.shadowOpacity = 0.2
         shapeLayer.shadowRadius = 10
+    }
+    
+    func scaleAnimation() {
+        let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+        scaleAnimation.fromValue = 0.8
+        scaleAnimation.toValue = 1
+        scaleAnimation.duration = 0.2
+        scaleAnimation.isRemovedOnCompletion = false
+        scaleAnimation.fillMode = .backwards
+        button.layer.add(scaleAnimation, forKey: nil)
     }
 }
 
